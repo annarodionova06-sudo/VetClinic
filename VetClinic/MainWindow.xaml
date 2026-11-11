@@ -1,0 +1,36 @@
+﻿<Window x:Class="VetClinic.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VetClinic"
+        mc:Ignorable="d"
+        Title="Лапа и Хвост" Height="720" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Images/icon.ico">
+    <DockPanel>
+        <!-- Шапка -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource AccentBackground}" Padding="15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Логотип (добавь картинку logo.png в папку Images) -->
+                <Image Grid.Column="0" Source="/Images/icon.jpg" Height="50" Stretch="Uniform"/>
+
+                <TextBlock Grid.Column="1" Text="Ветеринарная клиника «Лапа и Хвост»" 
+                           FontSize="24" FontWeight="Bold" Foreground="#5A3E85"
+                           VerticalAlignment="Center" Margin="20,0,0,0"/>
+
+                <TextBlock x:Name="fio" Grid.Column="2" 
+                           VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"/>
+            </Grid>
+        </Border>
+
+        <!-- Область для страниц -->
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+    </DockPanel>
+</Window>

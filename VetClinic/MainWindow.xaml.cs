@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using VetClinic.AppData;
 using VetClinic.Pages;
 
@@ -12,41 +10,51 @@ namespace VetClinic
         {
             InitializeComponent();
 
-            // Создаем контекст БД
             AppConnect.model0db = new VetClinicEntities();
-
-            // Сохраняем фрейм для навигации
             AppFrame.mainFrame = MainFrame;
 
-            // Переходим на страницу входа
             MainFrame.Navigate(new AuthorizationPage());
+
+            // ВАЖНО: вызываем при старте, чтобы гость не видел кнопку
+            UpdateUIForRole();
         }
 
-        // Метод для обновления интерфейса после авторизации
         public void UpdateUIForRole()
         {
-            // Проверяем, что пользователь авторизован
-            if (AppConnect.user != null)
+            // Гость (user == null) или пользователь с ролью 3 — кнопку не показываем
+            if (AppConnect.user != null &&
+                (AppConnect.user.RoleId == 1 || AppConnect.user.RoleId == 2))
             {
-                // Показываем ФИО пользователя
-                fio.Text = AppConnect.user.FIO;
-
-                // Проверяем роль (idRole == 1 - Админ, idRole == 2 - Менеджер)
-                if (AppConnect.user.RoleId == 1 || AppConnect.user.RoleId == 2)
-                {
-                    btnAdminMenu.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    btnAdminMenu.Visibility = Visibility.Collapsed;
-                }
+                btnAdminMenu.Visibility = Visibility.Visible;
             }
             else
             {
-                // Пользователь не авторизован
-                fio.Text = "";
                 btnAdminMenu.Visibility = Visibility.Collapsed;
             }
+
+            // ФИО: если не авторизован — показываем "Гость"
+            if (AppConnect.user != null)
+            {
+                fio.Text = AppConnect.user.FIO;
+            }
+            else
+            {
+                fio.Text = "Гость";
+            }
+        }
+
+        private void btnAdminMenu_Click(object sender, RoutedEventArgs e)
+        {
+            // Дублирующая проверка прямо на клике
+            if (AppConnect.user == null ||
+                (AppConnect.user.RoleId != 1 && AppConnect.user.RoleId != 2))
+            {
+                MessageBox.Show("Доступ запрещён. Раздел доступен только менеджерам и администраторам.",
+                    "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            MainFrame.Navigate(new AdminMenuPage());
         }
 
         private void btnProfile_Click(object sender, RoutedEventArgs e)
@@ -62,17 +70,11 @@ namespace VetClinic
             }
         }
 
-        private void btnAdminMenu_Click(object sender, RoutedEventArgs e)
-        {
-            MainFrame.Navigate(new AdminMenuPage());
-        }
-
-        // Метод для выхода из системы
         public void Logout()
         {
             AppConnect.user = null;
             MainFrame.Navigate(new AuthorizationPage());
-            UpdateUIForRole();
+            UpdateUIForRole(); // кнопка снова скроется
         }
     }
 }

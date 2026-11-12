@@ -159,6 +159,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\AdminMenuPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\AppointmentsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -191,6 +195,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\ProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\RegistrationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -203,6 +211,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\TableViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Pages\AddAppointmentPage.xaml.cs">
@@ -210,6 +222,9 @@
     </Compile>
     <Compile Include="Pages\AddPetPage.xaml.cs">
       <DependentUpon>AddPetPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\AdminMenuPage.xaml.cs">
+      <DependentUpon>AdminMenuPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\AppointmentsPage.xaml.cs">
       <DependentUpon>AppointmentsPage.xaml</DependentUpon>
@@ -235,6 +250,9 @@
     <Compile Include="Pages\MyOrdersPage.xaml.cs">
       <DependentUpon>MyOrdersPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ProfilePage.xaml.cs">
+      <DependentUpon>ProfilePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\RegistrationPage.xaml.cs">
       <DependentUpon>RegistrationPage.xaml</DependentUpon>
     </Compile>
@@ -243,6 +261,9 @@
     </Compile>
     <Compile Include="Pages\ServicesPage.xaml.cs">
       <DependentUpon>ServicesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TableViewPage.xaml.cs">
+      <DependentUpon>TableViewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

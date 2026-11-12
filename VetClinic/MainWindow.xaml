@@ -16,17 +16,46 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Логотип (добавь картинку logo.png в папку Images) -->
                 <Image Grid.Column="0" Source="/Images/icon.jpg" Height="50" Stretch="Uniform"/>
 
                 <TextBlock Grid.Column="1" Text="Ветеринарная клиника «Лапа и Хвост»" 
-                           FontSize="24" FontWeight="Bold" Foreground="#5A3E85"
-                           VerticalAlignment="Center" Margin="20,0,0,0"/>
+                   FontSize="24" FontWeight="Bold" Foreground="#5A3E85"
+                   VerticalAlignment="Center" Margin="20,0,0,0"/>
 
-                <TextBlock x:Name="fio" Grid.Column="2" 
-                           VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"/>
+                <!-- Кнопки в колонке 2 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+
+                    <!-- Кнопка Меню управления (видна только Менеджеру и Администратору) -->
+                    <Button x:Name="btnAdminMenu" 
+                            Content="⚙️ Управление" 
+                            Padding="15,8"
+                            Margin="0,0,10,0"
+                            Background="#4A90E2"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="btnAdminMenu_Click"
+                            Visibility="Collapsed"/>
+
+                    <!-- Кнопка Личный кабинет -->
+                    <Button x:Name="btnProfile" 
+                            Content="👤 Личный кабинет" 
+                            Padding="15,8"
+                            Background="#9B7ED9"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="btnProfile_Click"/>
+
+                </StackPanel>
+
+                <!-- ФИО в колонке 3 -->
+                <TextBlock x:Name="fio" Grid.Column="3" 
+                   VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"
+                   Margin="20,0,0,0"/>
             </Grid>
         </Border>
 

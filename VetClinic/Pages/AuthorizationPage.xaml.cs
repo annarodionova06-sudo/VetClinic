@@ -24,7 +24,7 @@ namespace VetClinic.Pages
                 return;
             }
 
-            // Ищем пользователя по Email и паролю (plain text)
+            // Ищем пользователя по Email и паролю
             var u = AppConnect.model0db.Users
                 .FirstOrDefault(x => x.Email == login && x.PasswordHash == password);
 
@@ -35,17 +35,29 @@ namespace VetClinic.Pages
                 return;
             }
 
+            // 1. Сохраняем пользователя в глобальную переменную
             AppConnect.user = u;
-            ((MainWindow)Application.Current.MainWindow).fio.Text = u.FIO;
 
-            // Роли: 1 - Админ, 2 - Ветеринар, 3 - Клиент
-            if (u.RoleId == 1 || u.RoleId == 2)
+            // 2. Получаем ссылку на главное окно (один раз)
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+
+            if (mainWindow != null)
             {
-                AppFrame.mainFrame.Navigate(new AppointmentsPage());
-            }
-            else
-            {
-                AppFrame.mainFrame.Navigate(new ServicesPage());
+                // 3. Обновляем ФИО и видимость кнопок (включая кнопку "Управление")
+                mainWindow.fio.Text = u.FIO;
+                mainWindow.UpdateUIForRole(); // <-- ДА, ВЫЗЫВАЕМ ЗДЕСЬ!
+
+                // 4. Переходим на нужную страницу в зависимости от роли
+                // ⚠️ ВАЖНО: проверь в своей модели (.edmx), как точно называется поле: 
+                // если оно называется idRole, замени u.RoleId на u.idRole
+                if (u.RoleId == 1 || u.RoleId == 2)
+                {
+                    AppFrame.mainFrame.Navigate(new AppointmentsPage());
+                }
+                else
+                {
+                    AppFrame.mainFrame.Navigate(new ServicesPage());
+                }
             }
         }
 

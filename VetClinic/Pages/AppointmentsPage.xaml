@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:VetClinic.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
- Title="Записи на приём — Лапа и Хвост">
+      Title="Записи на приём — Лапа и Хвост">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -21,46 +21,55 @@
                      ToolTip="Поиск по питомцу, услуге, ветеринару"/>
         </StackPanel>
 
-        <ListView x:Name="listAppointments" Grid.Row="1" MouseDoubleClick="listAppointments_MouseDoubleClick">
+        <ListView x:Name="listAppointments" Grid.Row="1" MouseDoubleClick="listAppointments_MouseDoubleClick"
+                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border Margin="5" Padding="10" BorderBrush="#9B7ED9"
-                            BorderThickness="1" Background="#E8DEF5" CornerRadius="4">
+                            BorderThickness="1" Background="#E8DEF5" CornerRadius="4"
+                            HorizontalAlignment="Stretch">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="150"/>
-                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0">
-                                <TextBlock FontWeight="Bold">
+                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                <TextBlock FontWeight="Bold" TextWrapping="Wrap">
                                     <Run Text="Услуга:"/>
                                     <Run Text="{Binding ServiceName, Mode=OneWay}"/>
                                 </TextBlock>
-                                <TextBlock>
+                                <TextBlock TextWrapping="Wrap">
                                     <Run Text="Питомец:"/>
                                     <Run Text="{Binding PetInfo, Mode=OneWay}"/>
                                 </TextBlock>
-                                <TextBlock>
+                                <TextBlock TextWrapping="Wrap">
                                     <Run Text="Ветеринар:"/>
                                     <Run Text="{Binding VetName, Mode=OneWay}"/>
                                 </TextBlock>
                             </StackPanel>
 
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center">
-                                <Run Text="Дата:"/>
-                                <Run Text="{Binding AppointmentDate, StringFormat=dd.MM.yyyy HH:mm}"/>
-                            </TextBlock>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="5,0">
+                                <TextBlock TextWrapping="Wrap">
+                                    <Run Text="Дата:"/>
+                                    <Run Text="{Binding AppointmentDate, StringFormat=dd.MM.yyyy HH:mm}"/>
+                                </TextBlock>
+                            </StackPanel>
 
                             <TextBlock Grid.Column="2" VerticalAlignment="Center"
                                        FontWeight="Bold"
-                                       Text="{Binding StatusName, Mode=OneWay}"/>
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"
+                                       Text="{Binding StatusName, Mode=OneWay}"
+                                       Margin="5,0"/>
 
                             <TextBlock Grid.Column="3" VerticalAlignment="Center"
-                                       TextWrapping="Wrap" FontSize="12"
-                                       Text="{Binding Description}"/>
+                                       TextWrapping="Wrap" 
+                                       FontSize="12"
+                                       Text="{Binding Description}"
+                                       Margin="5,0,0,0"/>
                         </Grid>
                     </Border>
                 </DataTemplate>

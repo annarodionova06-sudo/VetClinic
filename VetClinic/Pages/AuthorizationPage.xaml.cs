@@ -43,13 +43,10 @@ namespace VetClinic.Pages
 
             if (mainWindow != null)
             {
-                // 3. Обновляем ФИО и видимость кнопок (включая кнопку "Управление")
                 mainWindow.fio.Text = u.FIO;
-                mainWindow.UpdateUIForRole(); // <-- ДА, ВЫЗЫВАЕМ ЗДЕСЬ!
+                ((MainWindow)Application.Current.MainWindow).fio.Text = u.FIO;
+                ((MainWindow)Application.Current.MainWindow).UpdateHeader();
 
-                // 4. Переходим на нужную страницу в зависимости от роли
-                // ⚠️ ВАЖНО: проверь в своей модели (.edmx), как точно называется поле: 
-                // если оно называется idRole, замени u.RoleId на u.idRole
                 if (u.RoleId == 1 || u.RoleId == 2)
                 {
                     AppFrame.mainFrame.Navigate(new AppointmentsPage());
@@ -70,6 +67,7 @@ namespace VetClinic.Pages
         {
             AppConnect.user = null;
             ((MainWindow)Application.Current.MainWindow).fio.Text = "Гость";
+            ((MainWindow)Application.Current.MainWindow).UpdateHeader(); // ← ДОБАВИТЬ
             AppFrame.mainFrame.Navigate(new ServicesPage());
         }
     }

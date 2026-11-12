@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using VetClinic.AppData;
 
 namespace VetClinic.Pages
@@ -21,22 +13,22 @@ namespace VetClinic.Pages
         private List<Services> _all = new List<Services>();
 
         public ServicesPage()
-{
-    InitializeComponent();
+        {
+            InitializeComponent();
 
-    var mw = Application.Current.MainWindow as MainWindow;
-    mw.fio.Text = AppConnect.user?.FIO ?? "Гость";
+            var mw = Application.Current.MainWindow as MainWindow;
+            mw.fio.Text = AppConnect.user?.FIO ?? "Гость";
 
-    // Гость и клиент — только просмотр
-    if (AppConnect.user == null || AppConnect.user.RoleId == 3)
-        filterPanel.Visibility = Visibility.Collapsed;
+            // Гость и клиент — скрываем фильтры
+            if (AppConnect.user == null || AppConnect.user.RoleId == 3)
+                filterPanel.Visibility = Visibility.Collapsed;
 
-    // Кнопка "Удалить" только для админа
-    if (AppConnect.user?.RoleId == 1)
-        btnDeleteService.Visibility = Visibility.Visible;
+            // Кнопка "Удалить" только для админа
+            if (AppConnect.user?.RoleId == 1)
+                btnDeleteService.Visibility = Visibility.Visible;
 
-    Load();
-}
+            Load();
+        }
 
         private void Load()
         {
@@ -72,41 +64,40 @@ namespace VetClinic.Pages
             listServices.ItemsSource = list.ToList();
         }
 
-        private void Filters_Changed(object sender, System.EventArgs e) => Apply();
+        private void Filters_Changed(object sender, EventArgs e) => Apply();
 
-        private void listMedicines_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        // Двойной клик по услуге — редактирование для админа
+        private void listServices_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (!(listServices.SelectedItem is Medicines m)) return;
+            if (!(listServices.SelectedItem is Services s)) return;
 
-            // Режим выбора лекарства для добавления в заказ
-            if (AppConnect.SelectMedicineMode)
+            // Режим выбора услуги для добавления в запись
+            if (AppConnect.SelectServiceMode)
             {
-                AppConnect.SelectMedicineMode = false;
-                var existing = AppConnect.CartMedicines.FirstOrDefault(c => c.MedicineId == m.Id);
+                AppConnect.SelectServiceMode = false;
+                var existing = AppConnect.CartServices.FirstOrDefault(c => c.ServiceId == s.Id);
                 if (existing != null)
                     existing.Quantity++;
                 else
-                    AppConnect.CartMedicines.Add(new CartItemMedicine
+                    AppConnect.CartServices.Add(new CartItemService
                     {
-                        MedicineId = m.Id,
-                        Name = m.Name,
-                        ManufacturerName = m.Manufacturers?.ManufacturerName ?? "",
-                        PricePerUnit = m.FinalPrice,
-                        Quantity = 1
+                        ServiceId = s.Id,
+                        ServiceName = s.ServiceName,
+                        Price = s.Price,
+                        DurationMinutes = s.DurationMinutes
                     });
-                AppFrame.mainFrame.Navigate(new CartMedicinesPage());
+                AppFrame.mainFrame.Navigate(new CartServicesPage());
                 return;
             }
 
-            // Админ и Ветеринар — редактирование
-            if (AppConnect.user != null && (AppConnect.user.RoleId == 1 || AppConnect.user.RoleId == 2))
+            // ТОЛЬКО админ (роль 1) — редактирование
+            if (AppConnect.user != null && AppConnect.user.RoleId == 1)
             {
-                AppFrame.mainFrame.Navigate(new MedicineDetailsPage(m));
+                AppFrame.mainFrame.Navigate(new ServiceDetailsPage(s));
                 return;
             }
 
-            // Клиент и гость — просмотр
-            AppFrame.mainFrame.Navigate(new MedicineDetailsPage(m));
+            // Все остальные — ничего не происходит
         }
 
         private void Medicines_Click(object sender, RoutedEventArgs e)
@@ -165,12 +156,17 @@ namespace VetClinic.Pages
             AppFrame.mainFrame.Navigate(new MyOrdersPage());
         }
 
-
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             AppConnect.user = null;
             AppConnect.CartServices.Clear();
             AppConnect.CartMedicines.Clear();
+            var mw = Application.Current.MainWindow as MainWindow;
+            if (mw != null)
+            {
+                mw.Logout();
+            }
+
             AppFrame.mainFrame.Navigate(new AuthorizationPage());
         }
 
@@ -207,42 +203,49 @@ namespace VetClinic.Pages
 
         private void Del_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void listServices_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (!(listServices.SelectedItem is Medicines m)) return;
-
-            // Режим выбора лекарства для добавления в заказ
-            if (AppConnect.SelectMedicineMode)
+            // 1. Проверка прав (только Администратор, роль 1)
+            if (AppConnect.user?.RoleId != 1)
             {
-                AppConnect.SelectMedicineMode = false;
-                var existing = AppConnect.CartMedicines.FirstOrDefault(c => c.MedicineId == m.Id);
-                if (existing != null)
-                    existing.Quantity++;
-                else
-                    AppConnect.CartMedicines.Add(new CartItemMedicine
-                    {
-                        MedicineId = m.Id,
-                        Name = m.Name,
-                        ManufacturerName = m.Manufacturers?.ManufacturerName ?? "",
-                        PricePerUnit = m.FinalPrice,
-                        Quantity = 1
-                    });
-                AppFrame.mainFrame.Navigate(new CartMedicinesPage());
+                MessageBox.Show("Удаление доступно только администратору.",
+                    "Доступ ограничен", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Админ и Ветеринар — редактирование
-            if (AppConnect.user != null && (AppConnect.user.RoleId == 1 || AppConnect.user.RoleId == 2))
+            // 2. Проверка, выбрана ли услуга в списке
+            if (!(listServices.SelectedItem is Services s))
             {
-                AppFrame.mainFrame.Navigate(new MedicineDetailsPage(m));
+                MessageBox.Show("Сначала выберите услугу в списке для удаления.",
+                    "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            // Клиент и гость — просмотр
-            AppFrame.mainFrame.Navigate(new MedicineDetailsPage(m));
+            // 3. ЗАПРОС ПОДТВЕРЖДЕНИЯ (Именно наличие этого окна проверяет ваш тест!)
+            var result = MessageBox.Show(
+                $"Вы действительно хотите удалить услугу «{s.ServiceName}»?\nЭто действие нельзя будет отменить.",
+                "Подтверждение удаления",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes)
+            {
+                return; // Пользователь нажал "Нет", прерываем выполнение
+            }
+
+            // 4. Попытка удаления из базы данных
+            try
+            {
+                AppConnect.model0db.Services.Remove(s);
+                AppConnect.model0db.SaveChanges();
+
+                MessageBox.Show("Услуга успешно удалена.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                Load(); // Обновляем список на экране
+            }
+            catch (Exception ex)
+            {
+                // Если услуга уже используется в таблице Appointments (Записи), сработает эта защита (F4)
+                MessageBox.Show("Невозможно удалить услугу, так как она уже присутствует в одной или нескольких записях на приём.\n\n" + ex.Message,
+                    "Ошибка удаления", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
